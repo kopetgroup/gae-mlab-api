@@ -193,11 +193,18 @@ class MlabModel {
   /*
    (array) q
   */
-  public function findOne($col='',$q=[]){
+  public function findOne($col='',$q=[],$o=[]){
+    //projection
+    $f = '';
+    if(!empty($o)){
+      if(isset($o['projection'])){
+        $f = '&f='.json_encode($o['projection']);
+      }
+    }
     if(empty($q)){
-      $dat = file_get_contents('https://api.mlab.com/api/1/databases/'.$this->db.'/collections/'.$col.'?fo=true&apiKey='.$this->api);
+      $dat = file_get_contents('https://api.mlab.com/api/1/databases/'.$this->db.'/collections/'.$col.'?fo=true&apiKey='.$this->api.$f);
     }else{
-      $dat = file_get_contents('https://api.mlab.com/api/1/databases/'.$this->db.'/collections/'.$col.'?fo=true&apiKey='.$this->api.'&q='.json_encode($q));
+      $dat = file_get_contents('https://api.mlab.com/api/1/databases/'.$this->db.'/collections/'.$col.'?fo=true&apiKey='.$this->api.'&q='.json_encode($q).$f);
     }
     if($dat==''){
       $dat = '{}';
